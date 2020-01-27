@@ -153,17 +153,17 @@ public class Robot extends TimedRobot {
       t.set(ControlMode.Position, t.getSelectedSensorPosition(0) + 1024);
     }
     */
-    //shooter.spinnyBoi2k(joy.getRawButton(3));
+    shooter.spinnyBoi2k(joy.getRawButton(3));
 
-    if(joy.getRawButton(3)) {
-      limeTable.getEntry("ledMode").setNumber(3);
-      driveTrain.oneUpRafael();
-    }
-    else {
-      driveTrain.mecDrive(joy);
-      limeTable.getEntry("ledMode").setNumber(1);
-      driveTrain.resetErrors();
-    }
+    // if(joy.getRawButton(3)) {
+    //   limeTable.getEntry("ledMode").setNumber(3);
+    //   driveTrain.oneUpRafael();
+    // }
+    // else {
+    //   driveTrain.mecDrive(joy);
+    //   limeTable.getEntry("ledMode").setNumber(1);
+    //   driveTrain.resetErrors();
+    // }
   }
 
   

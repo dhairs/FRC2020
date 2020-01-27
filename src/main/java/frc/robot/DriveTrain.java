@@ -78,11 +78,10 @@ public class DriveTrain {
                 return;
             }
             else {
-                integral = (priorI + (tx*0.027));
+                integral += (tx*0.027);
                 deriv = (tx - priorE) / 2.7;
                 steeringAdjust = (kP * tx) + (kI * integral) + (kD * deriv);
                 priorE = tx;
-                priorI = integral;
             }
         }
         else {
