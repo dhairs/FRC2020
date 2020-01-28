@@ -15,9 +15,9 @@ public class Shooter {
 
     public void spinnyBoi2k(boolean isButtonPressed){
     
-    if(isButtonPressed == true){
-        shooterMotor1.set(1);
-        shooterMotor2.set(-1);
+    if(isButtonPressed){
+        shooterMotor1.set(0.8);
+        shooterMotor2.set(-0.8);
     } else {
         shooterMotor1.set(0);
         shooterMotor2.set(0);

@@ -15,7 +15,7 @@ public class DriveTrain {
     final double kP = 0.0175;
     final double kF = 0.1;
     final double kI = 0.005;
-    final double kD = 0.3;
+    final double kD = 0.003;
     final double speed = 0.5;
 
     WPI_TalonSRX backLeft;
@@ -79,12 +79,13 @@ public class DriveTrain {
             }
             else {
                 integral += (tx*0.027);
-                deriv = (tx - priorE) / 2.7;
+                deriv = (tx - priorE) / 0.027;
                 steeringAdjust = (kP * tx) + (kI * integral) + (kD * deriv);
                 priorE = tx;
             }
         }
         else {
+          //  if (Robot.gyro.getAngle() % 360 >= 
             mDrive.driveCartesian(0, 0, speed);
             return;
         }

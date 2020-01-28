@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
   Shooter shooter;
   WPI_TalonSRX t;
 
- // ADXRS450_Gyro gyro;
+  public static ADXRS450_Gyro gyro;
 
   NetworkTable limeTable;
 
@@ -67,7 +67,8 @@ public class Robot extends TimedRobot {
 
     //t = new WPI_TalonSRX(0);
 
-    //gyro = new ADXRS450_Gyro();
+    gyro = new ADXRS450_Gyro();
+    gyro.calibrate();
     
 
     //ultrasonic.setAutomaticMode(true);
@@ -91,7 +92,7 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putNumber("Ultrasonic Reading", ultrasonic.getRangeInches());
     //System.out.println(t.getSelectedSensorPosition());
     //System.out.println("Velocity: " + t.getSelectedSensorVelocity() + "       Position: " + t.getSelectedSensorPosition(0));
-    //System.out.println(gyro.getAngle());
+    SmartDashboard.putNumber("Gyro Angle", gyro.getAngle() % 360);
   }
 
   /**
@@ -153,17 +154,17 @@ public class Robot extends TimedRobot {
       t.set(ControlMode.Position, t.getSelectedSensorPosition(0) + 1024);
     }
     */
-    shooter.spinnyBoi2k(joy.getRawButton(3));
+    //shooter.spinnyBoi2k(joy.getRawButton(3));
 
-    // if(joy.getRawButton(3)) {
-    //   limeTable.getEntry("ledMode").setNumber(3);
-    //   driveTrain.oneUpRafael();
-    // }
-    // else {
-    //   driveTrain.mecDrive(joy);
-    //   limeTable.getEntry("ledMode").setNumber(1);
-    //   driveTrain.resetErrors();
-    // }
+    if(joy.getRawButton(3)) {
+      limeTable.getEntry("ledMode").setNumber(3);
+      driveTrain.oneUpRafael();
+    }
+    else {
+      driveTrain.mecDrive(joy);
+      limeTable.getEntry("ledMode").setNumber(1);
+      driveTrain.resetErrors();
+    }
   }
 
   
@@ -175,36 +176,36 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 
-  private void PIDSetup() {
-    //t.set(ControlMode.Position, 5000);
+  // private void PIDSetup() {
+  //   //t.set(ControlMode.Position, 5000);
 
-    t.configFactoryDefault();
+  //   t.configFactoryDefault();
 
-    t.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
+  //   t.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
 
-    t.setSensorPhase(true);
+  //   t.setSensorPhase(true);
 
-    t.setInverted(false);
+  //   t.setInverted(false);
     
-    t.configNominalOutputForward(0, 30);
-    t.configNominalOutputReverse(0, 30);
-    t.configPeakOutputForward(1, 30);
-    t.configPeakOutputReverse(-1, 30);
+  //   t.configNominalOutputForward(0, 30);
+  //   t.configNominalOutputReverse(0, 30);
+  //   t.configPeakOutputForward(1, 30);
+  //   t.configPeakOutputReverse(-1, 30);
 
-    t.configMotionAcceleration(0, 500);
-    t.configMotionCruiseVelocity(0, 500);
+  //   t.configMotionAcceleration(0, 500);
+  //   t.configMotionCruiseVelocity(0, 500);
     
-    t.configAllowableClosedloopError(0, 0, 30);
+  //   t.configAllowableClosedloopError(0, 0, 30);
 
-    //First parameter is PID_loop_id
-    t.config_kF(0, 0.094);
-    t.config_kP(0, .35);
-    t.config_kI(0, 0.001);
-    t.config_kD(0, 3);
+  //   //First parameter is PID_loop_id
+  //   t.config_kF(0, 0.094);
+  //   t.config_kP(0, .35);
+  //   t.config_kI(0, 0.001);
+  //   t.config_kD(0, 3);
 
-    t.setSelectedSensorPosition(0, 0, 30);
-    //t.set(ControlMode.Position, 100);
+  //   t.setSelectedSensorPosition(0, 0, 30);
+  //   //t.set(ControlMode.Position, 100);
 
-    //t.clearMotionProfileTrajectories();
-  }
+  //   //t.clearMotionProfileTrajectories();
+  // }
 }
