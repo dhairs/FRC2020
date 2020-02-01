@@ -59,7 +59,7 @@ public class DriveTrain {
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(1 * j.getX(), -1* j.getY(), 1 * j.getZ());
+        mDrive.driveCartesian(0.4 * j.getX(), -0.4* j.getY(), 0.4 * j.getZ());
 
     }
 

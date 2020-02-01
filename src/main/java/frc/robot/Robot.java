@@ -38,14 +38,16 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  DriveTrain driveTrain;
+  //DriveTrain driveTrain;
  // Ultrasonic ultrasonic;
 
+  Conveyor conveyor;
   Joystick joy;
   Shooter shooter;
-  WPI_TalonSRX t;
+  Intake intake;
+  //WPI_TalonSRX t;
 
-  public static ADXRS450_Gyro gyro;
+  //public static ADXRS450_Gyro gyro;
 
   NetworkTable limeTable;
 
@@ -59,16 +61,18 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    driveTrain = new DriveTrain();
+    //driveTrain = new DriveTrain();
     //ultrasonic = new Ultrasonic(9, 8);
     shooter = new Shooter();
+    conveyor = new Conveyor();
+    intake = new Intake();
 
     joy = new Joystick(0);
 
     //t = new WPI_TalonSRX(0);
 
-    gyro = new ADXRS450_Gyro();
-    gyro.calibrate();
+    //gyro = new ADXRS450_Gyro();
+    //gyro.calibrate();
     
 
     //ultrasonic.setAutomaticMode(true);
@@ -130,22 +134,53 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if(joy.getRawButton(3)) {
-      limeTable.getEntry("ledMode").setNumber(3);
-      driveTrain.oneUpRafael();
-    }
-    else if(joy.getTrigger()) {
-      limeTable.getEntry("ledMode").setNumber(3);
-    }
-    else {
-      driveTrain.mecDrive(joy);
-      //limeTable.getEntry("ledMode").setNumber(1);
-      driveTrain.resetErrors();
-    }
+    // if(joy.getRawButton(3)) {
+    //   limeTable.getEntry("ledMode").setNumber(3);
+    //   driveTrain.oneUpRafael();
+    // }
+    // else if(joy.getTrigger()) {
+    //   limeTable.getEntry("ledMode").setNumber(3);
+    // }
+    // else {
+    //   driveTrain.mecDrive(joy);
+    //   limeTable.getEntry("ledMode").setNumber(1);
+    //   driveTrain.resetErrors();
+    // }
 
-    if(joy.getRawButton(6)) {
+    if(joy.getTrigger()) {
       shooter.spinnyBoi2k(0.8);
     }
+    else {
+      shooter.spinnyBoi2k(0);
+    }
+
+    // if(joy.getRawButton(4)) {
+    //   intake.setSpeed(0.3);
+    // }
+    // else {
+    //   intake.setSpeed(0);
+    // }
+
+    if(joy.getRawButton(6)) {
+      conveyor.convey(1);
+    }
+    else if(joy.getRawButton(4)) {
+      conveyor.convey(-1);
+    }
+    else {
+      conveyor.checkIntakeSwitch();
+    }
+
+    if(joy.getRawButton(5)) {
+      conveyor.feed(1);
+    }
+    else if(joy.getRawButton(3)) {
+      conveyor.feed(-1);
+    } 
+    else {
+      //conveyor.feed(0);
+    }
+
   }
 
   /**
@@ -153,38 +188,39 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    
   }
 
-  private void PIDSetup() {
-    //t.set(ControlMode.Position, 5000);
+  // private void PIDSetup() {
+  //   //t.set(ControlMode.Position, 5000);
 
-    t.configFactoryDefault();
+  //   t.configFactoryDefault();
 
-    t.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
+  //   t.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
 
-    t.setSensorPhase(true);
+  //   t.setSensorPhase(true);
 
-    t.setInverted(false);
+  //   t.setInverted(false);
     
-    t.configNominalOutputForward(0, 30);
-    t.configNominalOutputReverse(0, 30);
-    t.configPeakOutputForward(1, 30);
-    t.configPeakOutputReverse(-1, 30);
+  //   t.configNominalOutputForward(0, 30);
+  //   t.configNominalOutputReverse(0, 30);
+  //   t.configPeakOutputForward(1, 30);
+  //   t.configPeakOutputReverse(-1, 30);
 
-    t.configMotionAcceleration(0, 500);
-    t.configMotionCruiseVelocity(0, 500);
+  //   t.configMotionAcceleration(0, 500);
+  //   t.configMotionCruiseVelocity(0, 500);
     
-    t.configAllowableClosedloopError(0, 0, 30);
+  //   t.configAllowableClosedloopError(0, 0, 30);
 
-    //First parameter is PID_loop_id
-    t.config_kF(0, 0.094);
-    t.config_kP(0, .35);
-    t.config_kI(0, 0.001);
-    t.config_kD(0, 3);
+  //   //First parameter is PID_loop_id
+  //   t.config_kF(0, 0.094);
+  //   t.config_kP(0, .35);
+  //   t.config_kI(0, 0.001);
+  //   t.config_kD(0, 3);
 
-    t.setSelectedSensorPosition(0, 0, 30);
-    //t.set(ControlMode.Position, 100);
+  //   t.setSelectedSensorPosition(0, 0, 30);
+  //   //t.set(ControlMode.Position, 100);
 
-    //t.clearMotionProfileTrajectories();
-  }
+  //   //t.clearMotionProfileTrajectories();
+  // }
 }

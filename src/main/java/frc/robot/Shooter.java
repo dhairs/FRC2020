@@ -9,8 +9,8 @@ public class Shooter {
     WPI_TalonSRX shooterMotor2;
 
     public Shooter() {
-    shooterMotor1 = new WPI_TalonSRX(9);    
-    shooterMotor2 = new WPI_TalonSRX(6);
+    shooterMotor1 = new WPI_TalonSRX(Variables.shooterMotorOnePort);    
+    shooterMotor2 = new WPI_TalonSRX(Variables.shooterMotorTwoPort);
     }
 
     public void spinnyBoi2k(double speed){
