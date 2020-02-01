@@ -13,15 +13,8 @@ public class Shooter {
     shooterMotor2 = new WPI_TalonSRX(6);
     }
 
-    public void spinnyBoi2k(boolean isButtonPressed){
-    
-    if(isButtonPressed){
-        shooterMotor1.set(0.8);
-        shooterMotor2.set(-0.8);
-    } else {
-        shooterMotor1.set(0);
-        shooterMotor2.set(0);
-    }
-    
+    public void spinnyBoi2k(double speed){
+        shooterMotor1.set(speed);
+        shooterMotor2.set(-speed);
     }
 }
