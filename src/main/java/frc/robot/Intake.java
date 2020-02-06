@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake {
     // Motors
@@ -30,6 +31,9 @@ public class Intake {
     }
 
     public void checkIntake(boolean bPressed){
+        SmartDashboard.putBoolean("Front", frontGateBeam.get());
+        SmartDashboard.putBoolean("End", endConveyerBeam.get());
+        SmartDashboard.putBoolean("Feeder", shooterHoldBeam.get());
         if (bPressed){
             // Set Intake to run
             setSpeed(Variables.intakeMotorSpeed);
