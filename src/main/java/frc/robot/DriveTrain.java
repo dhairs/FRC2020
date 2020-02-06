@@ -7,7 +7,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain {
 
@@ -59,7 +58,7 @@ public class DriveTrain {
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(0.4 * j.getX(), -0.4* j.getY(), 0.4 * j.getZ());
+        mDrive.driveCartesian(0.6 * j.getX(), -0.6* j.getY(), 0.6 * j.getZ());
 
     }
 
