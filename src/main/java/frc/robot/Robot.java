@@ -10,10 +10,10 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 
 //import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -45,12 +45,14 @@ public class Robot extends TimedRobot {
   Joystick joy;
   Shooter shooter;
   Intake intake;
+  ControlPanel controlPanel;
   //WPI_TalonSRX t;
+
+  DigitalInput digitalInput;
 
   //public static ADXRS450_Gyro gyro;
 
   NetworkTable limeTable;
-
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -67,6 +69,8 @@ public class Robot extends TimedRobot {
     conveyor = new Conveyor();
     intake = new Intake();
 
+    controlPanel = new ControlPanel();
+    
     joy = new Joystick(0);
 
     //t = new WPI_TalonSRX(0);
@@ -79,10 +83,13 @@ public class Robot extends TimedRobot {
 
     //PIDSetup();
 
+    digitalInput = new DigitalInput(3);
+
+    controlPanel.colorPIDSetup();
+
     limeTable = NetworkTableInstance.getDefault().getTable("limelight");
 
   }
-
   /**
    * This function is called every robot packet, no matter the mode. Use
    * this for items like diagnostics that you want ran during disabled,
@@ -93,8 +100,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    controlPanel.getColor();
   }
-
   /**
    * This autonomous (along with the chooser code above) shows how to select
    * between different autonomous modes using the dashboard. The sendable
@@ -128,7 +135,6 @@ public class Robot extends TimedRobot {
         break;
     }
   }
-
   /**
    * This function is called periodically during operator control.
    */
@@ -146,7 +152,17 @@ public class Robot extends TimedRobot {
     //   limeTable.getEntry("ledMode").setNumber(1);
     //   driveTrain.resetErrors();
     // }
-
+    controlPanel.stopOnColor();
+    
+    if(joy.getRawButtonPressed(4)){
+      controlPanel.spinALot();
+    }
+    if(joy.getRawButton(5)){
+      controlPanel.encoderReset();
+    }
+    if(joy.getRawButtonPressed(3)){
+      controlPanel.randomColor();
+    }
     if(joy.getTrigger()) {
       shooter.spinnyBoi2k(0.8);
     }
@@ -154,13 +170,16 @@ public class Robot extends TimedRobot {
       shooter.spinnyBoi2k(0);
     }
 
+    controlPanel.encoder();
+    
+
+    SmartDashboard.putBoolean("Limit Switch Active 🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿", digitalInput.get());
     // if(joy.getRawButton(4)) {
     //   intake.setSpeed(0.3);
     // }
     // else {
     //   intake.setSpeed(0);
     // }
-
     if(joy.getRawButton(6)) {
       conveyor.convey(1);
     }
@@ -180,7 +199,6 @@ public class Robot extends TimedRobot {
     else {
       //conveyor.feed(0);
     }
-
   }
 
   /**
@@ -201,7 +219,6 @@ public class Robot extends TimedRobot {
   //   t.setSensorPhase(true);
 
   //   t.setInverted(false);
-    
   //   t.configNominalOutputForward(0, 30);
   //   t.configNominalOutputReverse(0, 30);
   //   t.configPeakOutputForward(1, 30);
