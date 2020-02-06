@@ -7,21 +7,13 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.Encoder;
 
 //import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -38,16 +30,11 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  //DriveTrain driveTrain;
- // Ultrasonic ultrasonic;
-
-  Conveyor conveyor;
-  Joystick joy;
-  Shooter shooter;
+  DriveTrain driveTrain;
   Intake intake;
-  //WPI_TalonSRX t;
+  Climbing climbing;
 
-  //public static ADXRS450_Gyro gyro;
+  Joystick joy;
 
   NetworkTable limeTable;
 
@@ -61,21 +48,11 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    //driveTrain = new DriveTrain();
-    //ultrasonic = new Ultrasonic(9, 8);
-    shooter = new Shooter();
-    conveyor = new Conveyor();
+    driveTrain = new DriveTrain();
     intake = new Intake();
+    climbing = new Climbing();
 
     joy = new Joystick(0);
-
-    //t = new WPI_TalonSRX(0);
-
-    //gyro = new ADXRS450_Gyro();
-    //gyro.calibrate();
-    
-
-    //ultrasonic.setAutomaticMode(true);
 
     //PIDSetup();
 
@@ -134,53 +111,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    // if(joy.getRawButton(3)) {
-    //   limeTable.getEntry("ledMode").setNumber(3);
-    //   driveTrain.oneUpRafael();
-    // }
-    // else if(joy.getTrigger()) {
-    //   limeTable.getEntry("ledMode").setNumber(3);
-    // }
-    // else {
-    //   driveTrain.mecDrive(joy);
-    //   limeTable.getEntry("ledMode").setNumber(1);
-    //   driveTrain.resetErrors();
-    // }
+    // Run intake if side-button is pressed
+    intake.checkIntake(joy.getRawButton(3));
 
-    if(joy.getTrigger()) {
-      shooter.spinnyBoi2k(0.8);
-    }
-    else {
-      shooter.spinnyBoi2k(0);
+    // Drivetrain and Vision targeting buttons
+    if (joy.getTrigger()){
+      limeTable.getEntry("ledMode").setNumber(3);
+      driveTrain.targetGoal();
+    } else {
+      driveTrain.mecDrive(joy);
+      driveTrain.resetErrors();
+      limeTable.getEntry("ledMode").setNumber(1);
     }
 
-    // if(joy.getRawButton(4)) {
-    //   intake.setSpeed(0.3);
-    // }
-    // else {
-    //   intake.setSpeed(0);
-    // }
-
-    if(joy.getRawButton(6)) {
-      conveyor.convey(1);
-    }
-    else if(joy.getRawButton(4)) {
-      conveyor.convey(-1);
-    }
-    else {
-      conveyor.checkIntakeSwitch();
-    }
-
-    if(joy.getRawButton(5)) {
-      conveyor.feed(1);
-    }
-    else if(joy.getRawButton(3)) {
-      conveyor.feed(-1);
-    } 
-    else {
-      //conveyor.feed(0);
-    }
-
+    // Checking for climb input
+    climbing.checkClimb(joy.getPOV());
   }
 
   /**
