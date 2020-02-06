@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 
 //import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -58,6 +59,8 @@ public class Robot extends TimedRobot {
 
     limeTable = NetworkTableInstance.getDefault().getTable("limelight");
 
+    // Setting Camera view for Shuffleboard
+    limeTable.getEntry("stream").setNumber(2);
   }
 
   /**
@@ -126,6 +129,35 @@ public class Robot extends TimedRobot {
 
     // Checking for climb input
     climbing.checkClimb(joy.getPOV());
+
+    // Transfer to color wheel later
+    String gameData;
+    gameData = DriverStation.getInstance().getGameSpecificMessage();
+    if(gameData.length() > 0)
+    {
+      SmartDashboard.putBoolean("Stage 3 Active", true);
+      switch (gameData.charAt(0))
+      {
+        case 'B' :
+          SmartDashboard.putString("Target Color", "Blue");
+          break;
+        case 'G' :
+          SmartDashboard.putString("Target Color", "Green");
+          break;
+        case 'R' :
+          SmartDashboard.putString("Target Color", "Red");
+          break;
+        case 'Y' :
+          SmartDashboard.putString("Target Color", "Yellow");
+          break;
+        default :
+          SmartDashboard.putString("Target Color", "Error");
+          break;
+      }
+    } else {
+      SmartDashboard.putBoolean("Stage 3 Active", false);
+      SmartDashboard.putString("Target Color", "N/A");
+    }
   }
 
   /**
