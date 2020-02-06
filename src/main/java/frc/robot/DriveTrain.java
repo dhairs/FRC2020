@@ -44,10 +44,10 @@ public class DriveTrain {
     public DriveTrain() {
         zAdjust = 0; xAdjust = 0; yAdjust = 0; integralZ = 0; priorI = 0; derivZ=0; priorEZ=0;
 
-        frontLeft = new WPI_TalonSRX(1);
-        frontRight = new WPI_TalonSRX(0);
-        backRight = new WPI_TalonSRX(2);
-        backLeft = new WPI_TalonSRX(3);
+        frontLeft = new WPI_TalonSRX(Variables.frontLeftMotorPort);
+        frontRight = new WPI_TalonSRX(Variables.frontRightMotorPort);
+        backRight = new WPI_TalonSRX(Variables.backRightMotorPort);
+        backLeft = new WPI_TalonSRX(Variables.backLeftMotorPort);
 
        //backLeft.setInverted(true);
        //backRight.setInverted(true);
@@ -73,8 +73,6 @@ public class DriveTrain {
         ty = limeTable.getEntry("ty").getDouble(0);
         ta = limeTable.getEntry("ta").getDouble(0);
         ts = limeTable.getEntry("ts").getDouble(0);
-
-        SmartDashboard.putNumber("Area", ta);
 
         if(tv == 1) {
             if(xIsAcceptable(tx)) {
@@ -131,9 +129,6 @@ public class DriveTrain {
             yAdjust = 0;
             xAdjust = 0;
         }
-
-        SmartDashboard.putNumber("Steering Adjust", zAdjust);
-        SmartDashboard.putNumber("Drive Adjust", yAdjust);
         
         // Set drivetrain to the calculated values ////NOTE: xAdjust is not currently being used, it is always zero
         mDrive.driveCartesian(xAdjust, yAdjust, zAdjust);
