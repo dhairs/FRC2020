@@ -14,6 +14,7 @@ public class Variables {
     public static final int intakeMotorPort = 9;
     public static final int raiseMotorPort = 10;
     public static final int climbMotorPort = 11;
+    public static final int controlMotorPort = 12;
 
     // Speed Amounts
     public static final double intakeMotorSpeed = 0.25;
