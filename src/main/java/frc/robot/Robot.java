@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -35,11 +34,11 @@ public class Robot extends TimedRobot {
   DriveTrain driveTrain;
   Intake intake;
   Climbing climbing;
-  ShuffleboardWrapper sb;
 
   Joystick joy;
 
   NetworkTable limeTable;
+  NetworkTable mainTable;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -54,7 +53,6 @@ public class Robot extends TimedRobot {
     driveTrain = new DriveTrain();
     intake = new Intake();
     climbing = new Climbing();
-    sb = new ShuffleboardWrapper();
 
     joy = new Joystick(0);
 
@@ -138,28 +136,28 @@ public class Robot extends TimedRobot {
     gameData = DriverStation.getInstance().getGameSpecificMessage();
     if(gameData.length() > 0)
     {
-      sb.setWidget("Main", "Stage 3 Active", true, BuiltInWidgets.kBooleanBox);
+      SmartDashboard.putBoolean("Stage 3 Boolean", true);
       switch (gameData.charAt(0))
       {
         case 'B' :
-          sb.setWidget("Main", "Target Color", "Blue", BuiltInWidgets.kTextView);
+          SmartDashboard.putString("Target Color", "Blue");
           break;
         case 'G' :
-          sb.setWidget("Main", "Target Color", "Green", BuiltInWidgets.kTextView);
+          SmartDashboard.putString("Target Color", "Blue");
           break;
         case 'R' :
-          sb.setWidget("Main", "Target Color", "Red", BuiltInWidgets.kTextView);
+          SmartDashboard.putString("Target Color", "Blue");
           break;
         case 'Y' :
-          sb.setWidget("Main", "Target Color", "Yellow", BuiltInWidgets.kTextView);
+          SmartDashboard.putString("Target Color", "Blue");
           break;
         default :
-          sb.setWidget("Main", "Target Color", "Error", BuiltInWidgets.kTextView);
+          SmartDashboard.putString("Target Color", "Error");
           break;
       }
     } else {
-      sb.setWidget("Main", "Stage 3 Active", false, BuiltInWidgets.kBooleanBox);
-      sb.setWidget("Main", "Target Color", "N/A", BuiltInWidgets.kTextView);
+      SmartDashboard.putBoolean("Stage 3 Boolean", false);
+      SmartDashboard.putString("Target Color", "N/A");
     }
   }
 

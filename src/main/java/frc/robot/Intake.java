@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake {
     // Motors
@@ -17,17 +17,13 @@ public class Intake {
     DigitalInput endConveyerBeam;
     DigitalInput shooterHoldBeam;
 
-    ShuffleboardWrapper sb;
-
     public Intake() {
         intakeMotor = new WPI_TalonSRX(Variables.intakeMotorPort);
         conveyorMotor = new WPI_TalonSRX(Variables.conveyorMotorPort);
         feedMotor = new WPI_TalonSRX(Variables.feedMotorPort);
-        frontGateBeam = new DigitalInput(0);
-        endConveyerBeam = new DigitalInput(2);
-        shooterHoldBeam = new DigitalInput(4);
-
-        sb = new ShuffleboardWrapper();
+        frontGateBeam = new DigitalInput(Variables.frontBeamPort);
+        endConveyerBeam = new DigitalInput(Variables.endBeamPort);
+        shooterHoldBeam = new DigitalInput(Variables.feedBeamPort);
     }
 
     public void setSpeed(double speed) {
@@ -35,9 +31,10 @@ public class Intake {
     }
 
     public void checkIntake(boolean bPressed){
-        sb.setWidget("Main", "Front", frontGateBeam.get(), BuiltInWidgets.kBooleanBox);
-        sb.setWidget("Main", "End", endConveyerBeam.get(), BuiltInWidgets.kBooleanBox);
-        sb.setWidget("Main", "Feeder", shooterHoldBeam.get(), BuiltInWidgets.kBooleanBox);
+        SmartDashboard.putBoolean("FrontBeam", frontGateBeam.get());
+        SmartDashboard.putBoolean("EndBeam", endConveyerBeam.get());
+        SmartDashboard.putBoolean("FeederBeam", shooterHoldBeam.get());
+        System.out.println("FrontBeam: " + frontGateBeam.get());
         if (bPressed){
             // Set Intake to run
             setSpeed(Variables.intakeMotorSpeed);

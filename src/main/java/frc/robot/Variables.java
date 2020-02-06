@@ -21,4 +21,9 @@ public class Variables {
     public static final double feedIndexSpeed = 1.0;
     public static final double raiseMotorSpeed = 1.0;
     public static final double climbMotorSpeed = 1.0;
+
+    // Sensor Ports
+    public static final int frontBeamPort = 0;
+    public static final int endBeamPort = 2;
+    public static final int feedBeamPort = 4;
 }
