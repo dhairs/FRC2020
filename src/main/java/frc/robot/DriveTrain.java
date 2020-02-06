@@ -67,7 +67,7 @@ public class DriveTrain {
         mDrive.driveCartesian(0, 0, 0);
     }
 
-    public void oneUpRafael() {
+    public void targetGoal() {
         tv = limeTable.getEntry("tv").getDouble(0);
         tx = limeTable.getEntry("tx").getDouble(0);
         ty = limeTable.getEntry("ty").getDouble(0);
@@ -137,29 +137,6 @@ public class DriveTrain {
         
         // Set drivetrain to the calculated values ////NOTE: xAdjust is not currently being used, it is always zero
         mDrive.driveCartesian(xAdjust, yAdjust, zAdjust);
-    }
-
-    private void robotDoTargetHumanThing(){
-        tv = limeTable.getEntry("tv").getDouble(0);
-        tx = limeTable.getEntry("tx").getDouble(0);
-        ty = limeTable.getEntry("ty").getDouble(0);
-        ta = limeTable.getEntry("ta").getDouble(0);
-
-
-
-        if (tv == 1){
-            if (tx > 1){
-                zTargetingAdjust = 0.3;
-            } else if (tx < 1){
-                zTargetingAdjust = -0.3;
-            } else {
-                zTargetingAdjust = 0;
-            }
-        } else {
-            zTargetingAdjust = 0.3;
-        }
-
-        mDrive.driveCartesian(0, yTargetingAdjust, zTargetingAdjust);
     }
 
     private boolean xIsAcceptable(double value) {
