@@ -7,21 +7,14 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DriverStation;
 
 //import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -34,25 +27,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
+  private static final String kCustomAuto = "Main Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  //DriveTrain driveTrain;
- // Ultrasonic ultrasonic;
-
-  Conveyor conveyor;
-  Joystick joy;
-  Shooter shooter;
+  DriveTrain driveTrain;
   Intake intake;
-  ControlPanel controlPanel;
-  //WPI_TalonSRX t;
+  Climbing climbing;
 
-  DigitalInput digitalInput;
-
-  //public static ADXRS450_Gyro gyro;
+  Joystick joy;
 
   NetworkTable limeTable;
+  NetworkTable mainTable;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -63,33 +50,20 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    //driveTrain = new DriveTrain();
-    //ultrasonic = new Ultrasonic(9, 8);
-    shooter = new Shooter();
-    conveyor = new Conveyor();
+    driveTrain = new DriveTrain();
     intake = new Intake();
+    climbing = new Climbing();
 
-    controlPanel = new ControlPanel();
-    
     joy = new Joystick(0);
-
-    //t = new WPI_TalonSRX(0);
-
-    //gyro = new ADXRS450_Gyro();
-    //gyro.calibrate();
-    
-
-    //ultrasonic.setAutomaticMode(true);
 
     //PIDSetup();
 
-    digitalInput = new DigitalInput(3);
-
-    controlPanel.colorPIDSetup();
-
     limeTable = NetworkTableInstance.getDefault().getTable("limelight");
 
+    // Setting Camera view for Shuffleboard
+    limeTable.getEntry("stream").setNumber(2);
   }
+
   /**
    * This function is called every robot packet, no matter the mode. Use
    * this for items like diagnostics that you want ran during disabled,
@@ -100,8 +74,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    controlPanel.getColor();
   }
+
   /**
    * This autonomous (along with the chooser code above) shows how to select
    * between different autonomous modes using the dashboard. The sendable
@@ -135,69 +109,55 @@ public class Robot extends TimedRobot {
         break;
     }
   }
+
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
-    // if(joy.getRawButton(3)) {
-    //   limeTable.getEntry("ledMode").setNumber(3);
-    //   driveTrain.oneUpRafael();
-    // }
-    // else if(joy.getTrigger()) {
-    //   limeTable.getEntry("ledMode").setNumber(3);
-    // }
-    // else {
-    //   driveTrain.mecDrive(joy);
-    //   limeTable.getEntry("ledMode").setNumber(1);
-    //   driveTrain.resetErrors();
-    // }
-    controlPanel.stopOnColor();
-    
-    if(joy.getRawButtonPressed(4)){
-      controlPanel.spinALot();
-    }
-    if(joy.getRawButton(5)){
-      controlPanel.encoderReset();
-    }
-    if(joy.getRawButtonPressed(3)){
-      controlPanel.randomColor();
-    }
-    if(joy.getTrigger()) {
-      shooter.spinnyBoi2k(0.8);
-    }
-    else {
-      shooter.spinnyBoi2k(0);
+    // Run intake if side-button is pressed
+    intake.checkIntake(joy.getRawButton(3));
+
+    // Drivetrain and Vision targeting buttons
+    if (joy.getTrigger()){
+      limeTable.getEntry("ledMode").setNumber(3);
+      driveTrain.targetGoal();
+    } else {
+      driveTrain.mecDrive(joy);
+      driveTrain.resetErrors();
+      limeTable.getEntry("ledMode").setNumber(1);
     }
 
-    controlPanel.encoder();
-    
+    // Checking for climb input
+    climbing.checkClimb(joy.getPOV());
 
-    SmartDashboard.putBoolean("Limit Switch Active 🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿🎅🏿", digitalInput.get());
-    // if(joy.getRawButton(4)) {
-    //   intake.setSpeed(0.3);
-    // }
-    // else {
-    //   intake.setSpeed(0);
-    // }
-    if(joy.getRawButton(6)) {
-      conveyor.convey(1);
-    }
-    else if(joy.getRawButton(4)) {
-      conveyor.convey(-1);
-    }
-    else {
-      conveyor.checkIntakeSwitch();
-    }
-
-    if(joy.getRawButton(5)) {
-      conveyor.feed(1);
-    }
-    else if(joy.getRawButton(3)) {
-      conveyor.feed(-1);
-    } 
-    else {
-      //conveyor.feed(0);
+    // Transfer to color wheel later
+    String gameData;
+    gameData = DriverStation.getInstance().getGameSpecificMessage();
+    if(gameData.length() > 0)
+    {
+      SmartDashboard.putBoolean("Stage 3 Boolean", true);
+      switch (gameData.charAt(0))
+      {
+        case 'B' :
+          SmartDashboard.putString("Target Color", "Blue");
+          break;
+        case 'G' :
+          SmartDashboard.putString("Target Color", "Blue");
+          break;
+        case 'R' :
+          SmartDashboard.putString("Target Color", "Blue");
+          break;
+        case 'Y' :
+          SmartDashboard.putString("Target Color", "Blue");
+          break;
+        default :
+          SmartDashboard.putString("Target Color", "Error");
+          break;
+      }
+    } else {
+      SmartDashboard.putBoolean("Stage 3 Boolean", false);
+      SmartDashboard.putString("Target Color", "N/A");
     }
   }
 
@@ -219,6 +179,7 @@ public class Robot extends TimedRobot {
   //   t.setSensorPhase(true);
 
   //   t.setInverted(false);
+    
   //   t.configNominalOutputForward(0, 30);
   //   t.configNominalOutputReverse(0, 30);
   //   t.configPeakOutputForward(1, 30);

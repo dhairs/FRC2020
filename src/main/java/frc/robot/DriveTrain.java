@@ -7,7 +7,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain {
 
@@ -44,10 +43,10 @@ public class DriveTrain {
     public DriveTrain() {
         zAdjust = 0; xAdjust = 0; yAdjust = 0; integralZ = 0; priorI = 0; derivZ=0; priorEZ=0;
 
-        frontLeft = new WPI_TalonSRX(1);
-        frontRight = new WPI_TalonSRX(0);
-        backRight = new WPI_TalonSRX(2);
-        backLeft = new WPI_TalonSRX(3);
+        frontLeft = new WPI_TalonSRX(Variables.frontLeftMotorPort);
+        frontRight = new WPI_TalonSRX(Variables.frontRightMotorPort);
+        backRight = new WPI_TalonSRX(Variables.backRightMotorPort);
+        backLeft = new WPI_TalonSRX(Variables.backLeftMotorPort);
 
        //backLeft.setInverted(true);
        //backRight.setInverted(true);
@@ -59,7 +58,7 @@ public class DriveTrain {
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(0.4 * j.getX(), -0.4* j.getY(), 0.4 * j.getZ());
+        mDrive.driveCartesian(0.6 * j.getX(), -0.6* j.getY(), 0.6 * j.getZ());
 
     }
 
@@ -67,14 +66,12 @@ public class DriveTrain {
         mDrive.driveCartesian(0, 0, 0);
     }
 
-    public void oneUpRafael() {
+    public void targetGoal() {
         tv = limeTable.getEntry("tv").getDouble(0);
         tx = limeTable.getEntry("tx").getDouble(0);
         ty = limeTable.getEntry("ty").getDouble(0);
         ta = limeTable.getEntry("ta").getDouble(0);
         ts = limeTable.getEntry("ts").getDouble(0);
-
-        SmartDashboard.putNumber("Area", ta);
 
         if(tv == 1) {
             if(xIsAcceptable(tx)) {
@@ -131,35 +128,9 @@ public class DriveTrain {
             yAdjust = 0;
             xAdjust = 0;
         }
-
-        SmartDashboard.putNumber("Steering Adjust", zAdjust);
-        SmartDashboard.putNumber("Drive Adjust", yAdjust);
         
         // Set drivetrain to the calculated values ////NOTE: xAdjust is not currently being used, it is always zero
         mDrive.driveCartesian(xAdjust, yAdjust, zAdjust);
-    }
-
-    private void robotDoTargetHumanThing(){
-        tv = limeTable.getEntry("tv").getDouble(0);
-        tx = limeTable.getEntry("tx").getDouble(0);
-        ty = limeTable.getEntry("ty").getDouble(0);
-        ta = limeTable.getEntry("ta").getDouble(0);
-
-
-
-        if (tv == 1){
-            if (tx > 1){
-                zTargetingAdjust = 0.3;
-            } else if (tx < 1){
-                zTargetingAdjust = -0.3;
-            } else {
-                zTargetingAdjust = 0;
-            }
-        } else {
-            zTargetingAdjust = 0.3;
-        }
-
-        mDrive.driveCartesian(0, yTargetingAdjust, zTargetingAdjust);
     }
 
     private boolean xIsAcceptable(double value) {
