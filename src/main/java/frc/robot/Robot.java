@@ -9,12 +9,14 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 
 //import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -36,6 +38,7 @@ public class Robot extends TimedRobot {
   Climbing climbing;
 
   Joystick joy;
+  ADXRS450_Gyro gyro;
 
   NetworkTable limeTable;
   NetworkTable mainTable;
@@ -55,6 +58,7 @@ public class Robot extends TimedRobot {
     climbing = new Climbing();
 
     joy = new Joystick(0);
+    gyro = new ADXRS450_Gyro();
 
     //PIDSetup();
 
@@ -117,13 +121,14 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Run intake if side-button is pressed
     intake.checkIntake(joy.getRawButton(3));
+    //intake.setIntakeOn(joy.getRawButton(2));
 
     // Drivetrain and Vision targeting buttons
     if (joy.getTrigger()){
       limeTable.getEntry("ledMode").setNumber(3);
-      driveTrain.targetGoal();
+      //driveTrain.targetGoal();
     } else {
-      driveTrain.mecDrive(joy);
+      //driveTrain.mecDrive(joy);
       driveTrain.resetErrors();
       limeTable.getEntry("ledMode").setNumber(1);
     }

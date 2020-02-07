@@ -40,19 +40,35 @@ public class Intake {
             setSpeed(Variables.intakeMotorSpeed);
 
             // Front beam break check for indexing
-            if (frontGateBeam.get()){
+            if (!frontGateBeam.get()){
                 conveyorMotor.set(ControlMode.PercentOutput, Variables.conveyorIndexSpeed);
             } else {
                 conveyorMotor.set(ControlMode.PercentOutput, 0);
             }
 
             // End beam break check for indexing
-            if (endConveyerBeam.get() && !shooterHoldBeam.get()){
+            if (!endConveyerBeam.get()){ // && !shooterHoldBeam.get()
+                SmartDashboard.putBoolean("FeedSpin", true);
                 feedMotor.set(ControlMode.PercentOutput, Variables.feedIndexSpeed);
             } else {
                 feedMotor.set(ControlMode.PercentOutput, 0);
+                SmartDashboard.putBoolean("FeedSpin", false);
             }
 
+        } else {
+            setSpeed(0);
+            feedMotor.set(ControlMode.PercentOutput, 0);
+            conveyorMotor.set(ControlMode.PercentOutput, 0);
+        }
+    }
+
+    public void setIntakeOn(boolean bPressed){
+        if (bPressed){
+            intakeMotor.set(ControlMode.PercentOutput, -0.5);
+            conveyorMotor.set(ControlMode.PercentOutput, 1);
+        }else{
+            conveyorMotor.set(ControlMode.PercentOutput, 0);
+            intakeMotor.set(ControlMode.PercentOutput, 0);
         }
     }
 }
