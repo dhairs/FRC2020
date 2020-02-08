@@ -122,8 +122,18 @@ public class Robot extends TimedRobot {
     // Run intake if side-button is pressed
     //intake.checkIntake(joy.getRawButton(3));
     //intake.setIntakeOn(joy.getRawButton(2));
-    intake.setFullShoot(joy.getRawButton(4));
-
+    //intake.setFullShoot(joy.getRawButton(4));
+    if(joy.getRawButton(11)) {
+      intake.setColorFlapUp();
+    }
+    else {
+      if (joy.getRawButton(3))
+        intake.setColorFlap(0.1);
+      else if (joy.getRawButton(4))
+        intake.setColorFlap(-0.4);
+      else 
+        intake.setColorFlap(0);
+    }
     // Drivetrain and Vision targeting buttons
     if (joy.getTrigger()){
       limeTable.getEntry("ledMode").setNumber(3);

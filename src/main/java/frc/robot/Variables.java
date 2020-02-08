@@ -9,9 +9,9 @@ public class Variables {
     public static final int backRightMotorPort = 4;
     public static final int conveyorMotorPort = 0;
     public static final int feedMotorPort = 3;
-    public static final int shooterMotorOnePort = 2;
-    public static final int shooterMotorTwoPort = 1;
-    public static final int intakeMotorOnePort = 6;
+    public static final int shooterMotorOnePort = 1;
+    public static final int shooterMotorTwoPort = 2;
+    public static final int intakeMotorOnePort = 0;
     public static final int intakeMotorTwoPort = 4;
     public static final int raiseMotorPort = 10;
     public static final int climbMotorPort = 11;
@@ -23,7 +23,7 @@ public class Variables {
     public static final double feedIndexSpeed = 1.0;
     public static final double raiseMotorSpeed = 1.0;
     public static final double climbMotorSpeed = 1.0;
-    public static final double shooterSpeed = 0.6;
+    public static final double shooterSpeed = 0.56;
 
     // Sensor Ports
     public static final int frontStartBeamPort = 4;

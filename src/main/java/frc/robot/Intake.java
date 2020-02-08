@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.Rev2mDistanceSensor.Port;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,12 +16,16 @@ public class Intake {
     WPI_TalonSRX feedMotor;
     WPI_TalonSRX shooterOne;
     WPI_TalonSRX shooterTwo;
+    WPI_TalonSRX colorFlap;
 
     // Beam Break Sensors for Indexing Power Cells
     DigitalInput frontStartBeam;
     DigitalInput frontEndBeam;
     DigitalInput conveyorBeam;
     DigitalInput feedBeam;
+
+    Rev2mDistanceSensor dSenseHigh;
+    Rev2mDistanceSensor dSenseLow;
 
     public Intake() {
         intakeMotorOne = new WPI_TalonSRX(Variables.intakeMotorOnePort);
@@ -32,6 +38,9 @@ public class Intake {
         feedBeam = new DigitalInput(Variables.feedBeamPort);
         shooterOne = new WPI_TalonSRX(Variables.shooterMotorOnePort);
         shooterTwo = new WPI_TalonSRX(Variables.shooterMotorTwoPort);
+        colorFlap = new WPI_TalonSRX(0);
+        dSenseHigh = new Rev2mDistanceSensor(Port.kOnboard);
+        dSenseLow = new Rev2mDistanceSensor(Port.kMXP);
     }
 
     public void setSpeed(double speed) {
@@ -96,4 +105,30 @@ public class Intake {
             feedMotor.set(ControlMode.PercentOutput, 0);
         }
     }
+
+    public void setColorFlap(double speed){
+        colorFlap.set(ControlMode.PercentOutput, speed);
+    }
+
+    public void setColorFlapUp() {
+
+        if(dSenseHigh.getRange() < 10) {
+            colorFlap.set(0);
+        }
+        else {
+            colorFlap.set(-0.4);
+        }
+        
+    }
+
+    public void setColorFlapDown() {
+
+        if(dSenseHigh.getRange() < 10) {
+            colorFlap.set(0);
+        }
+        else {
+            colorFlap.set(0.1);
+        }
+    }
+    
 }
