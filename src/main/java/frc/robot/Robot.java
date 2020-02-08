@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
     limeTable = NetworkTableInstance.getDefault().getTable("limelight");
 
     // Setting Camera view for Shuffleboard
-    limeTable.getEntry("stream").setNumber(2);
+    //limeTable.getEntry("stream").setNumber(2);
   }
 
   /**
@@ -120,8 +120,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run intake if side-button is pressed
-    intake.checkIntake(joy.getRawButton(3));
+    //intake.checkIntake(joy.getRawButton(3));
     //intake.setIntakeOn(joy.getRawButton(2));
+    intake.setFullShoot(joy.getRawButton(4));
 
     // Drivetrain and Vision targeting buttons
     if (joy.getTrigger()){
