@@ -9,12 +9,14 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 
 //import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -31,14 +33,17 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  DriveTrain driveTrain;
-  Intake intake;
+  public static DriveTrain driveTrain;
+  public static Intake intake;
   Climbing climbing;
 
   Joystick joy;
+  ADXRS450_Gyro gyro;
 
   NetworkTable limeTable;
   NetworkTable mainTable;
+
+  boolean crossedLine = false;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -55,6 +60,7 @@ public class Robot extends TimedRobot {
     climbing = new Climbing();
 
     joy = new Joystick(0);
+    gyro = new ADXRS450_Gyro();
 
     //PIDSetup();
 
@@ -74,6 +80,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    
   }
 
   /**
@@ -103,11 +110,19 @@ public class Robot extends TimedRobot {
       case kCustomAuto:
         // Put custom auto code here
         break;
-      case kDefaultAuto:
+      case "Boring":
       default:
-        // Put default auto code here
+        if(crossedLine) {
+          AutoControl.boringAutoSeek();
+        }
+        else {
+          driveTrain.backUp();
+          crossedLine = true;
+        }
         break;
     }
+
+
   }
 
   /**
@@ -115,10 +130,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    // Run intake if side-button is pressed
-    intake.checkIntake(joy.getRawButton(3));
 
-    // Drivetrain and Vision targeting buttons
     if (joy.getTrigger()){
       limeTable.getEntry("ledMode").setNumber(3);
       driveTrain.targetGoal();
@@ -128,37 +140,65 @@ public class Robot extends TimedRobot {
       limeTable.getEntry("ledMode").setNumber(1);
     }
 
+    if(joy.getRawButton(5)) {
+      intake.setColorFlapUp();
+    }
+    else if(joy.getRawButton(6)) {
+      intake.setColorFlapDown();
+    }
+    else {
+      intake.setColorFlap(0);
+    }
+
+    // Run intake if side-button is pressed
+    //intake.checkIntake(joy.getRawButton(2));
+    //intake.setIntakeOn(joy.getRawButton(3));
+    //intake.setIntakeOn(joy.getRawButton(2));
+    //intake.setFullShoot(joy.getRawButton(4));
+    // if(joy.getRawButton(11)) {
+    //   intake.setColorFlapUp();
+    // }
+    // else {
+    //   if (joy.getRawButton(3))
+    //     intake.setColorFlap(0.1);
+    //   else if (joy.getRawButton(4))
+    //     intake.setColorFlap(-0.4);
+    //   else 
+    //     intake.setColorFlap(0);
+    // }
+    // // Drivetrain and Vision targeting buttons
+
     // Checking for climb input
-    climbing.checkClimb(joy.getPOV());
+    // climbing.checkClimb(joy.getPOV());
 
     // Transfer to color wheel later
-    String gameData;
-    gameData = DriverStation.getInstance().getGameSpecificMessage();
-    if(gameData.length() > 0)
-    {
-      SmartDashboard.putBoolean("Stage 3 Boolean", true);
-      switch (gameData.charAt(0))
-      {
-        case 'B' :
-          SmartDashboard.putString("Target Color", "Blue");
-          break;
-        case 'G' :
-          SmartDashboard.putString("Target Color", "Blue");
-          break;
-        case 'R' :
-          SmartDashboard.putString("Target Color", "Blue");
-          break;
-        case 'Y' :
-          SmartDashboard.putString("Target Color", "Blue");
-          break;
-        default :
-          SmartDashboard.putString("Target Color", "Error");
-          break;
-      }
-    } else {
-      SmartDashboard.putBoolean("Stage 3 Boolean", false);
-      SmartDashboard.putString("Target Color", "N/A");
-    }
+    // String gameData;
+    // gameData = DriverStation.getInstance().getGameSpecificMessage();
+    // if(gameData.length() > 0)
+    // {
+    //   SmartDashboard.putBoolean("Stage 3 Boolean", true);
+    //   switch (gameData.charAt(0))
+    //   {
+    //     case 'B' :
+    //       SmartDashboard.putString("Target Color", "Blue");
+    //       break;
+    //     case 'G' :
+    //       SmartDashboard.putString("Target Color", "Blue");
+    //       break;
+    //     case 'R' :
+    //       SmartDashboard.putString("Target Color", "Blue");
+    //       break;
+    //     case 'Y' :
+    //       SmartDashboard.putString("Target Color", "Blue");
+    //       break;
+    //     default :
+    //       SmartDashboard.putString("Target Color", "Error");
+    //       break;
+    //   }
+    // } else {
+    //   SmartDashboard.putBoolean("Stage 3 Boolean", false);
+    //   SmartDashboard.putString("Target Color", "N/A");
+    // }
   }
 
   /**
