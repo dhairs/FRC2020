@@ -130,8 +130,28 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    if (joy.getTrigger()){
+      limeTable.getEntry("ledMode").setNumber(3);
+      driveTrain.targetGoal();
+    } else {
+      driveTrain.mecDrive(joy);
+      driveTrain.resetErrors();
+      limeTable.getEntry("ledMode").setNumber(1);
+    }
+
+    if(joy.getRawButton(5)) {
+      intake.setColorFlapUp();
+    }
+    else if(joy.getRawButton(6)) {
+      intake.setColorFlapDown();
+    }
+    else {
+      intake.setColorFlap(0);
+    }
+
     // Run intake if side-button is pressed
-    intake.checkIntake(joy.getRawButton(2));
+    //intake.checkIntake(joy.getRawButton(2));
     //intake.setIntakeOn(joy.getRawButton(3));
     //intake.setIntakeOn(joy.getRawButton(2));
     //intake.setFullShoot(joy.getRawButton(4));
@@ -147,14 +167,6 @@ public class Robot extends TimedRobot {
     //     intake.setColorFlap(0);
     // }
     // // Drivetrain and Vision targeting buttons
-    // if (joy.getTrigger()){
-    //   limeTable.getEntry("ledMode").setNumber(3);
-    //   //driveTrain.targetGoal();
-    // } else {
-    //   //driveTrain.mecDrive(joy);
-    //   driveTrain.resetErrors();
-    //   limeTable.getEntry("ledMode").setNumber(1);
-    // }
 
     // Checking for climb input
     // climbing.checkClimb(joy.getPOV());
