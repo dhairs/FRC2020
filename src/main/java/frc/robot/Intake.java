@@ -23,13 +23,16 @@ public class Intake {
     DigitalInput frontEndBeam;
     DigitalInput conveyorBeam;
     DigitalInput feedBeam;
+    DigitalInput colorSenseDown;
+    DigitalInput colorSenseUp;
 
-    Rev2mDistanceSensor dSenseHigh;
-    Rev2mDistanceSensor dSenseLow;
+    //Rev2mDistanceSensor dSenseHigh;
+    //Rev2mDistanceSensor dSenseLow;
+
+
 
     public Intake() {
-        intakeMotorOne = new WPI_TalonSRX(Variables.intakeMotorOnePort);
-        intakeMotorTwo = new WPI_TalonSRX(Variables.intakeMotorTwoPort);
+        intakeMotorOne = new WPI_TalonSRX(Variables.intakeMotorOnePort); 
         conveyorMotor = new WPI_TalonSRX(Variables.conveyorMotorPort);
         feedMotor = new WPI_TalonSRX(Variables.feedMotorPort);
         frontStartBeam = new DigitalInput(Variables.frontStartBeamPort);
@@ -38,9 +41,11 @@ public class Intake {
         feedBeam = new DigitalInput(Variables.feedBeamPort);
         shooterOne = new WPI_TalonSRX(Variables.shooterMotorOnePort);
         shooterTwo = new WPI_TalonSRX(Variables.shooterMotorTwoPort);
-        colorFlap = new WPI_TalonSRX(0);
-        dSenseHigh = new Rev2mDistanceSensor(Port.kOnboard);
-        dSenseLow = new Rev2mDistanceSensor(Port.kMXP);
+        colorFlap = new WPI_TalonSRX(Variables.colorArmPort);
+        //dSenseHigh = new Rev2mDistanceSensor(Port.kOnboard);
+        //dSenseLow = new Rev2mDistanceSensor(Port.kMXP);
+        colorSenseDown = new DigitalInput(Variables.colorSenseDownPort);
+        colorSenseUp = new DigitalInput(Variables.colorSenseUpPort);
     }
 
     public void setSpeed(double speed) {
@@ -55,7 +60,11 @@ public class Intake {
         SmartDashboard.putBoolean("FeederBeam", feedBeam.get());
         if (bPressed){
             // Set Intake to run
-            setSpeed(Variables.intakeMotorSpeed);
+            if (frontEndBeam.get()){
+                setSpeed(Variables.intakeMotorSpeed);
+            } else {
+                setSpeed(0);
+            }
             
             // Front beam sensors for indexing
             if ((!frontStartBeam.get() || !frontEndBeam.get())){ // && feedBeam.get()
@@ -80,7 +89,7 @@ public class Intake {
 
     public void setIntakeOn(boolean bPressed){
         if (bPressed){
-            intakeMotorOne.set(ControlMode.PercentOutput, -0.25);
+            intakeMotorOne.set(ControlMode.PercentOutput, Variables.intakeMotorSpeed);
             //intakeMotorTwo.set(ControlMode.PercentOutput, 0);
             conveyorMotor.set(ControlMode.PercentOutput, 1);
         }else{
@@ -112,7 +121,7 @@ public class Intake {
 
     public void setColorFlapUp() {
 
-        if(dSenseHigh.getRange() < 10) {
+        if(!colorSenseUp.get()) {
             colorFlap.set(0);
         }
         else {
@@ -123,12 +132,21 @@ public class Intake {
 
     public void setColorFlapDown() {
 
-        if(dSenseHigh.getRange() < 10) {
+        if(!colorSenseDown.get()) {
             colorFlap.set(0);
         }
         else {
             colorFlap.set(0.1);
         }
+    }
+
+    public void spinUpShooter() {
+        shooterOne.set(ControlMode.PercentOutput, Variables.shooterSpeed);
+        shooterTwo.set(ControlMode.PercentOutput, -1 * Variables.shooterSpeed);
+    }
+
+    public void printThing() {
+        System.out.println(colorSenseDown.get());
     }
     
 }
