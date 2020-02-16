@@ -36,14 +36,14 @@ public class ControlPanel {
         sensyBoi = new ColorSensorV3(i2cPort);
         matchyMan = new ColorMatch();
 
-        kBlueTarget = ColorMatch.makeColor(0.252, 0.473, 0.275);
-        kGreenTarget = ColorMatch.makeColor(0.247, 0.541, 0.212);
-        kRedTarget = ColorMatch.makeColor(0.320, 0.462, 0.218);
-        kYellowTarget = ColorMatch.makeColor(0.297, 0.534, 0.168);
-        // private final Color kBlueTarget = ColorMatch.makeColor(0.177, 0.455, 0.367);
-        // private final Color kGreenTarget = ColorMatch.makeColor(0.226, 0.529, 0.245);
-        // private final Color kRedTarget = ColorMatch.makeColor(0.386, 0.419, 0.194);
-        // private final Color kYellowTarget = ColorMatch.makeColor(0.317, 0.517, 0.165);
+        // kBlueTarget = ColorMatch.makeColor(0.252, 0.473, 0.275);
+        // kGreenTarget = ColorMatch.makeColor(0.247, 0.541, 0.212);
+        // kRedTarget = ColorMatch.makeColor(0.320, 0.462, 0.218);
+        // kYellowTarget = ColorMatch.makeColor(0.297, 0.534, 0.168);
+        kBlueTarget = ColorMatch.makeColor(0.177, 0.455, 0.367);
+        kGreenTarget = ColorMatch.makeColor(0.226, 0.529, 0.245);
+        kRedTarget = ColorMatch.makeColor(0.386, 0.419, 0.194);
+        kYellowTarget = ColorMatch.makeColor(0.317, 0.517, 0.165);
 
         matchyMan.addColorMatch(kBlueTarget);
         matchyMan.addColorMatch(kGreenTarget);
@@ -112,13 +112,7 @@ public class ControlPanel {
         seenColor = "Unknown";
         }
         
-        SmartDashboard.putString("Colors", sensyBoi.getRawColor().toString());
-        SmartDashboard.putNumber("Confidence", match.confidence);
-        SmartDashboard.putString("Color Seen", seenColor);
-        SmartDashboard.putNumber("Red", detectedColor.red);
-        SmartDashboard.putNumber("Green", detectedColor.green);
-        SmartDashboard.putNumber("Blue", detectedColor.blue);  
-        //maybe uh oh no worky
+        
     }
 
     public void randomColor(){

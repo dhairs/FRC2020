@@ -193,6 +193,13 @@ public class Robot extends TimedRobot {
       System.out.println("dfjdkfdkf");
       String gameData = "Y";
       controlPanel.getColor(gameData);
+      SmartDashboard.putString("Colors", sensyBoi.getRawColor().toString());
+      SmartDashboard.putNumber("Confidence", match.confidence);
+      SmartDashboard.putString("Color Seen", seenColor);
+      SmartDashboard.putNumber("Red", detectedColor.red);
+      SmartDashboard.putNumber("Green", detectedColor.green);
+      SmartDashboard.putNumber("Blue", detectedColor.blue);  
+        //maybe uh oh no worky
       controlPanel.stopOnColor();
     }
     else if(joy.getRawButtonPressed(12)) {
