@@ -1,5 +1,4 @@
 package frc.robot;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -15,24 +14,25 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 public class DriveTrain {
 
     double ty, tx, tv, ta, ts, zAdjust, xAdjust, yAdjust, integralZ, priorI, derivZ, priorEZ;
-    final double kP_z = 0.0175;
+    final double kP_z = 0.009;
     final double kF_z = 0.1;
-    final double kI_z = 0.005;
-    final double kD_z = 0.003;
+    final double kI_z = 0;
+    final double kD_z = 0.001;
 
     final double kP_x = 0.0175;
     final double kF_x = 0.1;
     final double kI_x = 0.005;
     final double kD_x = 0.003;
 
-    final double kP_y = 0.0175;
+    final double kP_y = 0.03125;//go diwb
     final double kF_y = 0.1;
-    final double kI_y = 0.005;
-    final double kD_y = 0.003;
+    final double kI_y = 0;
+    final double kD_y = 0;
 
-    final double speed = 0.5;
+    final double speed = 0.7;
 
     long startShootTime = 0;
+    public static long startBackUpTime = 0;
 
     WPI_TalonSRX backLeft;
     WPI_TalonSRX backRight;
@@ -48,6 +48,8 @@ public class DriveTrain {
     MecanumDrive mDrive;
 
     NetworkTable limeTable;
+
+    boolean shooting = false;
 
     public DriveTrain() {
         zAdjust = 0;
@@ -72,8 +74,8 @@ public class DriveTrain {
         limeTable = NetworkTableInstance.getDefault().getTable("limelight");
 
         // PID Setup
-        pid_x.setTolerance(5);
-        pid_x.setSetpoint(0);
+       pid_x.setTolerance(5);
+       pid_x.setSetpoint(0);
         pid_y.setTolerance(1);
         pid_y.setSetpoint(0);
         pid_z.setTolerance(1);
@@ -81,7 +83,8 @@ public class DriveTrain {
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(0.6 * j.getX(), -0.6 * j.getY(), 0.6 * j.getZ());
+        mDrive.driveCartesian(0.7 * j.getX(), -0.6 * j.getY(), 0.6 * j.getZ());
+        shooting = false;
     }
 
     public void fullStop() {
@@ -94,8 +97,6 @@ public class DriveTrain {
         ty = limeTable.getEntry("ty").getDouble(0);
         ta = limeTable.getEntry("ta").getDouble(0);
         ts = limeTable.getEntry("ts").getDouble(0);
-
-        Robot.intake.spinUpShooter();
 
         if (tv == 1) {
             if (xIsAcceptable(tx)) {
@@ -136,8 +137,8 @@ public class DriveTrain {
                 // Check max/min bounds
                 if (yAdjust > speed) {
                     yAdjust = speed;
-                } else if (zAdjust < -speed) {
-                    zAdjust = -speed;
+                } else if (yAdjust < -speed) {
+                    yAdjust = -speed;
                 }
             }
         } else { // If no target is in sight, spin until one is found
@@ -150,14 +151,23 @@ public class DriveTrain {
         // being used, it is always zero
         mDrive.driveCartesian(xAdjust, yAdjust, zAdjust);
 
-        if(System.currentTimeMillis() - startShootTime > 3000) {
-            Robot.intake.setFullShoot(false);
-        }
-        else {
-            if(xIsAcceptable(tx) && yIsAcceptable(ty)) {
-                Robot.intake.setFullShoot(true);
+        if(xIsAcceptable(tx) && yIsAcceptable(ty)) {
+            if(shooting) {
+                if(System.currentTimeMillis() - startShootTime > 5000) {
+                    Robot.intake.setFullShoot(false);
+                }
+                else {
+                    if(xIsAcceptable(tx) && yIsAcceptable(ty)) {
+                        Robot.intake.setFullShoot(true);
+                    }
+                }
+            }
+            else {
+                shooting = true;
                 startShootTime = System.currentTimeMillis();
             }
+        }
+        else {
         }
     }
 
@@ -203,12 +213,16 @@ public class DriveTrain {
     }
 
     public void backUp() {
-        mDrive.driveCartesian(-0.5, 0, 0);
-        try {
-            wait(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(System.currentTimeMillis() - startBackUpTime > 1000) {
+            Robot.crossedLine = true;
+            mDrive.driveCartesian(0, 0, 0);
         }
-        mDrive.driveCartesian(0, 0, 0);
+        else {
+            mDrive.driveCartesian(0, -0.5, 0);
+        }
+    }
+
+    public void setShooting(boolean value) {
+        shooting = value;
     }
 }

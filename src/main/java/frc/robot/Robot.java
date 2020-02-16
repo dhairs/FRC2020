@@ -39,11 +39,15 @@ public class Robot extends TimedRobot {
 
   Joystick joy;
   ADXRS450_Gyro gyro;
+  ControlPanel controlPanel;
 
   NetworkTable limeTable;
   NetworkTable mainTable;
 
-  boolean crossedLine = false;
+  public static boolean crossedLine = false;
+
+  public static String gameData;
+  //cant wire was here
 
   /**
    * This function is run when the robot is first started up and should be
@@ -61,6 +65,8 @@ public class Robot extends TimedRobot {
 
     joy = new Joystick(0);
     gyro = new ADXRS450_Gyro();
+
+    controlPanel = new ControlPanel();
 
     //PIDSetup();
 
@@ -80,7 +86,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    
+    controlPanel.printColorEncoder();
   }
 
   /**
@@ -99,6 +105,7 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    DriveTrain.startBackUpTime = System.currentTimeMillis();
   }
 
   /**
@@ -113,11 +120,11 @@ public class Robot extends TimedRobot {
       case "Boring":
       default:
         if(crossedLine) {
-          AutoControl.boringAutoSeek();
+          driveTrain.targetGoal();
         }
         else {
           driveTrain.backUp();
-          crossedLine = true;
+          
         }
         break;
     }
@@ -131,15 +138,47 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    if (joy.getTrigger()){
-      limeTable.getEntry("ledMode").setNumber(3);
-      driveTrain.targetGoal();
-    } else {
-      driveTrain.mecDrive(joy);
-      driveTrain.resetErrors();
-      limeTable.getEntry("ledMode").setNumber(1);
+    if(joy.getRawButton(7)) {
+      climbing.climberUp();
+    }
+    else if(joy.getRawButton(8)) {
+      climbing.climberDown();
+    }
+    else {
+      climbing.stopClimber();
     }
 
+    if(joy.getRawButton(3)) {
+      climbing.setRaiserUp();
+    }
+    else if(joy.getRawButton(4)) {
+      climbing.setRaiserDown();
+    }
+    else {
+      climbing.stopRaiser();
+    }
+    
+
+    if (joy.getTrigger()){
+      limeTable.getEntry("ledMode").setNumber(3);
+      intake.spinUpShooter(true);
+      driveTrain.targetGoal(); 
+    }
+    else {
+      if(joy.getRawButton(10)) {
+        intake.setFullShoot(true);
+      }
+      else {
+        intake.setFullShoot(false);
+        intake.checkIntake(joy.getRawButton(2), joy.getRawButton(9));   
+      }
+      driveTrain.mecDrive(joy);
+      //intake.spinUpShooter(false);
+      driveTrain.resetErrors();
+     // limeTable.getEntry("ledMode").setNumber(1);
+    }
+
+    
     if(joy.getRawButton(5)) {
       intake.setColorFlapUp();
     }
@@ -150,55 +189,19 @@ public class Robot extends TimedRobot {
       intake.setColorFlap(0);
     }
 
-    // Run intake if side-button is pressed
-    //intake.checkIntake(joy.getRawButton(2));
-    //intake.setIntakeOn(joy.getRawButton(3));
-    //intake.setIntakeOn(joy.getRawButton(2));
-    //intake.setFullShoot(joy.getRawButton(4));
-    // if(joy.getRawButton(11)) {
-    //   intake.setColorFlapUp();
-    // }
-    // else {
-    //   if (joy.getRawButton(3))
-    //     intake.setColorFlap(0.1);
-    //   else if (joy.getRawButton(4))
-    //     intake.setColorFlap(-0.4);
-    //   else 
-    //     intake.setColorFlap(0);
-    // }
-    // // Drivetrain and Vision targeting buttons
-
-    // Checking for climb input
-    // climbing.checkClimb(joy.getPOV());
-
-    // Transfer to color wheel later
-    // String gameData;
-    // gameData = DriverStation.getInstance().getGameSpecificMessage();
-    // if(gameData.length() > 0)
-    // {
-    //   SmartDashboard.putBoolean("Stage 3 Boolean", true);
-    //   switch (gameData.charAt(0))
-    //   {
-    //     case 'B' :
-    //       SmartDashboard.putString("Target Color", "Blue");
-    //       break;
-    //     case 'G' :
-    //       SmartDashboard.putString("Target Color", "Blue");
-    //       break;
-    //     case 'R' :
-    //       SmartDashboard.putString("Target Color", "Blue");
-    //       break;
-    //     case 'Y' :
-    //       SmartDashboard.putString("Target Color", "Blue");
-    //       break;
-    //     default :
-    //       SmartDashboard.putString("Target Color", "Error");
-    //       break;
-    //   }
-    // } else {
-    //   SmartDashboard.putBoolean("Stage 3 Boolean", false);
-    //   SmartDashboard.putString("Target Color", "N/A");
-    // }
+    if(joy.getRawButton(11)) {
+      System.out.println("dfjdkfdkf");
+      String gameData = "Y";
+      controlPanel.getColor(gameData);
+      controlPanel.stopOnColor();
+    }
+    else if(joy.getRawButtonPressed(12)) {
+      controlPanel.spinFourTimes();
+    }
+    else {
+      controlPanel.setColorWheel(0);
+    }
+    
   }
 
   /**
@@ -208,37 +211,4 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
     
   }
-
-  // private void PIDSetup() {
-  //   //t.set(ControlMode.Position, 5000);
-
-  //   t.configFactoryDefault();
-
-  //   t.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
-
-  //   t.setSensorPhase(true);
-
-  //   t.setInverted(false);
-    
-  //   t.configNominalOutputForward(0, 30);
-  //   t.configNominalOutputReverse(0, 30);
-  //   t.configPeakOutputForward(1, 30);
-  //   t.configPeakOutputReverse(-1, 30);
-
-  //   t.configMotionAcceleration(0, 500);
-  //   t.configMotionCruiseVelocity(0, 500);
-    
-  //   t.configAllowableClosedloopError(0, 0, 30);
-
-  //   //First parameter is PID_loop_id
-  //   t.config_kF(0, 0.094);
-  //   t.config_kP(0, .35);
-  //   t.config_kI(0, 0.001);
-  //   t.config_kD(0, 3);
-
-  //   t.setSelectedSensorPosition(0, 0, 30);
-  //   //t.set(ControlMode.Position, 100);
-
-  //   //t.clearMotionProfileTrajectories();
-  // }
 }

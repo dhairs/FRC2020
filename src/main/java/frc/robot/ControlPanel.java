@@ -14,9 +14,9 @@ public class ControlPanel {
     WPI_TalonSRX controlPanel;
     Encoder encoder;
     Color detectedColor;
-    String colorString;
+    String seenColor;
     ColorMatchResult match;
-    String color;
+    String targetColor;
     ColorSensorV3 sensyBoi;
     ColorMatch matchyMan;
 
@@ -49,6 +49,8 @@ public class ControlPanel {
         matchyMan.addColorMatch(kGreenTarget);
         matchyMan.addColorMatch(kRedTarget);
         matchyMan.addColorMatch(kYellowTarget);
+
+        colorPIDSetup();
     }
     public void colorPIDSetup() {
         controlPanel.configFactoryDefault();
@@ -69,31 +71,50 @@ public class ControlPanel {
         controlPanel.configAllowableClosedloopError(0, 0, 30);
     
         controlPanel.config_kF(0, 0);
-        controlPanel.config_kP(0, 1);
+        controlPanel.config_kP(0, 0.25);
         controlPanel.config_kI(0, 0);
         controlPanel.config_kD(0, 0);
     
         controlPanel.setSelectedSensorPosition(0, 0, 30);
     }
-    public void getColor(){
+    public void getColor(String gameData){
         detectedColor = m_colorSensor.getColor();
+        findingColor = true;
 
         match = matchyMan.matchClosestColor(detectedColor);
 
+        switch(gameData.charAt(0)) {
+          case 'B':
+            targetColor = "Red";
+            break;
+          case 'Y':
+            targetColor = "Green";
+            break;
+          case 'R':
+            targetColor = "Blue";
+            break;
+          case 'G':
+            targetColor = "Yellow";
+            break;
+          default:
+            System.out.println("You messed up");
+            break;
+        }
+
         if (match.color == kBlueTarget) {
-        colorString = "Blue";
+        seenColor = "Blue";
         } else if (match.color == kRedTarget) {
-        colorString = "Red";
+        seenColor = "Red";
         } else if (match.color == kGreenTarget) {
-        colorString = "Green";
+        seenColor = "Green";
         } else if (match.color == kYellowTarget) {
-        colorString = "Yellow";
+        seenColor = "Yellow";
         } else {
-        colorString = "Unknown";
+        seenColor = "Unknown";
         }
         //SmartDashboard.putString("Colors", sensyBoi.getRawColor().toString());
         SmartDashboard.putNumber("Confidence", match.confidence);
-        SmartDashboard.putString("Color Seen", colorString);
+        SmartDashboard.putString("Color Seen", seenColor);
         SmartDashboard.putNumber("Red", detectedColor.red);
         SmartDashboard.putNumber("Green", detectedColor.green);
         SmartDashboard.putNumber("Blue", detectedColor.blue);  
@@ -107,39 +128,57 @@ public class ControlPanel {
             
             switch(betterRand) {
               case 1:
-                color = "Blue";
+                targetColor = "Blue";
                 break;
               case 2:
-                color = "Green";
+                targetColor = "Green";
                 break;
               case 3:
-                color = "Red";
+                targetColor = "Red";
                 break;
               case 4:
-                color = "Yellow";
+                targetColor = "Yellow";
                 break;
             }
 
-            SmartDashboard.putString("Required Color", color);
+            SmartDashboard.putString("Required Color", targetColor);
             //SmartDashboard.putNumber("randy", betterRand);
             controlPanel.set(0.2);
     }
     public void stopOnColor(){
-    if(colorString == color && findingColor){ 
+    if(seenColor.equals(targetColor)){ 
       controlPanel.set(0);
-      findingColor = false;
-      }
+    }
+    else {
+      controlPanel.set(Variables.controlPanelSpeed);
+    }
     }
     public void encoderReset(){
           controlPanel.setSelectedSensorPosition(0);
           controlPanel.set(ControlMode.Position, 0);
         }
     
-    public void spinALot(){
-         controlPanel.set(ControlMode.Position, controlPanel.getSelectedSensorPosition() + 797 * 4);
+    public void spinFourTimes(){
+         controlPanel.set(ControlMode.Position, controlPanel.getSelectedSensorPosition() + 3800);
     }
 
     public void encoder(){  
         SmartDashboard.putNumber("Enocoder Positron", controlPanel.getSelectedSensorPosition());
+    }
+
+    public void setTargeting(boolean b) {
+     
+    }
+
+    public void printColorEncoder() {
+      SmartDashboard.putNumber("Color Encoder", controlPanel.getSelectedSensorPosition());
+    }
+
+    public void setColorWheel(double speed) {
+      controlPanel.set(ControlMode.PercentOutput, speed);
+    }
+
+    public void resetThing() {
+      controlPanel.setSelectedSensorPosition(0);
     }
 }

@@ -53,7 +53,7 @@ public class Intake {
         //intakeMotorTwo.set(ControlMode.PercentOutput, speed);
     }
 
-    public void checkIntake(boolean bPressed){
+    public void checkIntake(boolean bPressed, boolean expellPressed){
         SmartDashboard.putBoolean("FrontBeam", frontStartBeam.get());
         SmartDashboard.putBoolean("EndBeam", frontEndBeam.get());
         SmartDashboard.putBoolean("ConveyorBeam", conveyorBeam.get());
@@ -67,36 +67,29 @@ public class Intake {
             }
             
             // Front beam sensors for indexing
-            if ((!frontStartBeam.get() || !frontEndBeam.get())){ // && feedBeam.get()
+            if ((!frontStartBeam.get() || !frontEndBeam.get()) & feedBeam.get()){ 
                 conveyorMotor.set(ControlMode.PercentOutput, Variables.conveyorIndexSpeed);
             } else {
                 conveyorMotor.set(ControlMode.PercentOutput, 0);
             }
 
             // End beam break check for indexing
-            if (!conveyorBeam.get()){ // && feedBeam.get()
+            if (!conveyorBeam.get() && feedBeam.get()){ // && feedBeam.get()
                 feedMotor.set(ControlMode.PercentOutput, Variables.feedIndexSpeed);
             } else {
                 feedMotor.set(ControlMode.PercentOutput, 0);
             }
 
+        } else if (expellPressed){
+            intakeMotorOne.set(-1 * Variables.intakeMotorSpeed);
+            conveyorMotor.set(-1 * Variables.conveyorIndexSpeed);
+            feedMotor.set(-0.50 * Variables.feedIndexSpeed);
         } else {
             setSpeed(0);
             feedMotor.set(ControlMode.PercentOutput, 0);
             conveyorMotor.set(ControlMode.PercentOutput, 0);
         }
-    }
-
-    public void setIntakeOn(boolean bPressed){
-        if (bPressed){
-            intakeMotorOne.set(ControlMode.PercentOutput, Variables.intakeMotorSpeed);
-            //intakeMotorTwo.set(ControlMode.PercentOutput, 0);
-            conveyorMotor.set(ControlMode.PercentOutput, 1);
-        }else{
-            intakeMotorOne.set(ControlMode.PercentOutput, 0);
-            //intakeMotorTwo.set(ControlMode.PercentOutput, 0);
-            conveyorMotor.set(ControlMode.PercentOutput, 0);
-        }
+    
     }
 
     public void setFullShoot(boolean bPressed){
@@ -110,6 +103,16 @@ public class Intake {
             shooterOne.set(ControlMode.PercentOutput, 0);
             shooterTwo.set(ControlMode.PercentOutput, 0);
             intakeMotorOne.set(ControlMode.PercentOutput, 0);
+            conveyorMotor.set(ControlMode.PercentOutput, 0);
+            feedMotor.set(ControlMode.PercentOutput, 0);
+        }
+    }
+
+    public void setFullConvey(boolean bPressed){
+        if (bPressed){
+            conveyorMotor.set(ControlMode.PercentOutput, Variables.conveyorIndexSpeed);
+            feedMotor.set(ControlMode.PercentOutput, Variables.feedIndexSpeed);
+        } else {
             conveyorMotor.set(ControlMode.PercentOutput, 0);
             feedMotor.set(ControlMode.PercentOutput, 0);
         }
@@ -140,13 +143,17 @@ public class Intake {
         }
     }
 
-    public void spinUpShooter() {
-        shooterOne.set(ControlMode.PercentOutput, Variables.shooterSpeed);
-        shooterTwo.set(ControlMode.PercentOutput, -1 * Variables.shooterSpeed);
+    public void spinUpShooter(boolean bPressed) {
+        if (bPressed){
+            shooterOne.set(ControlMode.PercentOutput, Variables.shooterSpeed);
+            shooterTwo.set(ControlMode.PercentOutput, -1 * Variables.shooterSpeed);
+        } else {
+            shooterOne.set(ControlMode.PercentOutput, 0);
+            shooterTwo.set(ControlMode.PercentOutput, 0);
+        }
     }
 
-    public void printThing() {
-        System.out.println(colorSenseDown.get());
+    public void setFeedMotor(double speed) {
+        feedMotor.set(ControlMode.PercentOutput, speed);
     }
-    
 }

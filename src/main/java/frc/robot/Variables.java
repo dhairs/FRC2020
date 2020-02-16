@@ -20,18 +20,21 @@ public class Variables {
 
     // Speed Amounts
     public static final double intakeMotorSpeed = -0.25;
-    public static final double conveyorIndexSpeed = 1.0;
+    public static final double conveyorIndexSpeed = 0.75;
     public static final double feedIndexSpeed = 1.0;
-    public static final double raiseMotorSpeed = 1.0;
-    public static final double climbMotorSpeed = 1.0;
-    public static final double shooterSpeed = 0.56;
+    public static final double raiseMotorUpSpeed = 1;
+    public static final double raiseMotorDownSpeed = -0.65;
+    public static final double climbMotorUpSpeed = 1.0;
+    public static final double climbMotorDownSpeed = -1;
+    public static final double shooterSpeed = 0.55;
+    public static final double controlPanelSpeed = 0.3;
 
     // Sensor Ports
-    public static final int frontStartBeamPort = 2;
+    public static final int frontStartBeamPort = 3;
     public static final int frontEndBeamPort = 4;
-    public static final int conveyorBeamPort = 3;
-    public static final int feedBeamPort = 0;
-    public static final int colorSenseDownPort = 9;
-    public static final int colorSenseUpPort = 5;
+    public static final int conveyorBeamPort = 5;
+    public static final int feedBeamPort = 6;
+    public static final int colorSenseDownPort = 0;
+    public static final int colorSenseUpPort = 1;
 
 }
