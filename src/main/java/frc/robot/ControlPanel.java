@@ -79,7 +79,6 @@ public class ControlPanel {
     }
     public void getColor(String gameData){
         detectedColor = m_colorSensor.getColor();
-        findingColor = true;
 
         match = matchyMan.matchClosestColor(detectedColor);
 
@@ -112,7 +111,8 @@ public class ControlPanel {
         } else {
         seenColor = "Unknown";
         }
-        //SmartDashboard.putString("Colors", sensyBoi.getRawColor().toString());
+        
+        SmartDashboard.putString("Colors", sensyBoi.getRawColor().toString());
         SmartDashboard.putNumber("Confidence", match.confidence);
         SmartDashboard.putString("Color Seen", seenColor);
         SmartDashboard.putNumber("Red", detectedColor.red);
